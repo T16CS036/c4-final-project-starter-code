@@ -4,6 +4,7 @@ import { DocumentClient } from 'aws-sdk/clients/dynamodb'
 import { createLogger } from '../utils/logger'
 import { TodoItem } from '../models/TodoItem'
 import { TodoUpdate } from '../models/TodoUpdate';
+import { UpdateTodoRequest } from '../requests/UpdateTodoRequest'
 
 const XAWS = AWSXRay.captureAWS(AWS)
 
@@ -79,25 +80,25 @@ export class TodosAccess {
         }).promise()
     }
 
-    // static async updateTodoItem(todoUpdate: UpdateTodoRequest, todoId: string, userId: string): Promise<void> {
-    //     logger.info('updateTodoItem', { userId, todoId, todoUpdate })
-    //     await docClient.update({
-    //         TableName: todosTable,
-    //         Key: {
-    //             userId,
-    //             todoId
-    //         },
-    //         UpdateExpression: 'set #name = :name, dueDate = :dueDate, done = :done',
-    //         ExpressionAttributeValues: {
-    //             ':name': todoUpdate.name,
-    //             ':dueDate': todoUpdate.dueDate,
-    //             ':done': todoUpdate.done
-    //         },
-    //         ExpressionAttributeNames: {
-    //             '#name': 'name'
-    //         }
-    //     }).promise()
-    // }
+    static async updateTodoItem(todoUpdate: UpdateTodoRequest, todoId: string, userId: string): Promise<void> {
+        logger.info('updateTodoItem', { userId, todoId, todoUpdate })
+        await docClient.update({
+            TableName: todosTable,
+            Key: {
+                userId,
+                todoId
+            },
+            UpdateExpression: 'set #name = :name, dueDate = :dueDate, done = :done',
+            ExpressionAttributeValues: {
+                ':name': todoUpdate.name,
+                ':dueDate': todoUpdate.dueDate,
+                ':done': todoUpdate.done
+            },
+            ExpressionAttributeNames: {
+                '#name': 'name'
+            }
+        }).promise()
+    }
 
     static async updateTodoAttachmentUrl(userId: string, todoId: string, attachmentUrl: string): Promise<void> {
         logger.info('updateTodoAttachmentUrl', { userId, todoId, attachmentUrl })
