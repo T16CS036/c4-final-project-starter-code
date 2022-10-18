@@ -14,14 +14,14 @@ export const handler = middy(
     
     const userId = getUserId(event)
     await deleteTodo(userId, todoId)
-
+    
     return {
       statusCode: 200,
       headers: {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Credentials': true
       },
-      body: "Todo deleted"      
+      body: "Todo deleted"
     }
   }
 )
