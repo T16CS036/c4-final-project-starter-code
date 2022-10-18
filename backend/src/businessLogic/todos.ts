@@ -99,6 +99,11 @@ export async function generateUploadUrl(
     return await TodosAccess.generateUploadUrl(userId, todoId)
     }
 
+export async function createAttachmentPresignedUrl():Promise<void> {
+    logger.info('createAttachmentPresignedUrl')
+    return
+}
+
 export async function getUploadUrl(
     userId: string,
     todoId: string
