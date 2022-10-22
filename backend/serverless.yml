@@ -7,6 +7,8 @@ plugins:
   - serverless-webpack
   - serverless-iam-roles-per-function
   - serverless-plugin-tracing
+  - serverless-reqvalidator-plugin
+  - serverless-aws-documentation
 
 provider:
   name: aws
@@ -75,6 +77,7 @@ functions:
           path: todos
           cors: true
           authorizer: Auth
+          reqValidatorName: 'XRequestBodyValidator'
           request:
             schemas:
               application/json: ${file(models/create-todo-model.json)}
@@ -93,6 +96,7 @@ functions:
           method: patch
           path: todos/{todoId}
           cors: true
+          reqValidatorName: 'XRequestBodyValidator'
     iamRoleStatements:
       - Effect: Allow
         Action:
@@ -180,6 +184,14 @@ resources:
             Projection:
               ProjectionType: ALL
         BillingMode: PAY_PER_REQUEST
+    XRequestBodyValidator:
+      Type: AWS::ApiGateway::RequestValidator
+      Properties:
+        Name: 'request-body-validator'
+        RestApiId:
+          Ref: ApiGatewayRestApi
+        ValidateRequestBody: true
+        ValidateRequestParameters: false
 
     # TODO: Complete the bucket properties below. 
     # Do not forget to add the CorsConfiguration propoerty
