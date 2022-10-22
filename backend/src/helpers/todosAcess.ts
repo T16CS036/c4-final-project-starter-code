@@ -6,7 +6,6 @@ import { TodoItem } from '../models/TodoItem'
 // import { TodoUpdate } from '../models/TodoUpdate';
 import { UpdateTodoRequest } from '../requests/UpdateTodoRequest'
 
-const AWSXRay = require('aws-xray-sdk')
 const XAWS = AWSXRay.captureAWS(AWS)
 
 const logger = createLogger('TodosAccess')
@@ -17,6 +16,7 @@ const docClient: DocumentClient = new XAWS.DynamoDB.DocumentClient()
 const todosTable = process.env.TODOS_TABLE
 const indexName = process.env.INDEX_NAME
 export class TodosAccess {
+
 
     static async getTodoItem(userId: string, todoId: string): Promise<TodoItem> {
         logger.info('getTodoItem', { userId, todoId })

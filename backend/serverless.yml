@@ -43,6 +43,15 @@ provider:
             - xray:PutTraceSegments
           Resource: "*"
 
+custom:
+  documentation:
+    models:
+      - name: CreateTodoRequest
+        contentType: 'application/json'
+        schema: ${file(models/create-todo-model.json)}
+      - name: UpdateTodoRequest
+        contentType: 'application/json'
+        schema: ${file(models/update-todo-model.json)}
 
 functions:
 
@@ -77,10 +86,12 @@ functions:
           path: todos
           cors: true
           authorizer: Auth
-          reqValidatorName: 'XRequestBodyValidator'
-          request:
-            schemas:
-              application/json: ${file(models/create-todo-model.json)}
+          reqValidatorName: 'ValidateBody'
+          documentation:
+            summary: 'Create a new todo'
+            description: 'Create a new todo'
+            requestModels:
+              'application/json': CreateTodoRequest
     iamRoleStatements:
       - Effect: Allow
         Action:
@@ -96,7 +107,12 @@ functions:
           method: patch
           path: todos/{todoId}
           cors: true
-          reqValidatorName: 'XRequestBodyValidator'
+          reqValidatorName: 'ValidateBody'
+          documentation:
+            summary: 'Update a todo'
+            description: 'Update a todo'
+            requestModels:
+              'application/json': UpdateTodoRequest
     iamRoleStatements:
       - Effect: Allow
         Action:
@@ -184,14 +200,6 @@ resources:
             Projection:
               ProjectionType: ALL
         BillingMode: PAY_PER_REQUEST
-    XRequestBodyValidator:
-      Type: AWS::ApiGateway::RequestValidator
-      Properties:
-        Name: 'request-body-validator'
-        RestApiId:
-          Ref: ApiGatewayRestApi
-        ValidateRequestBody: true
-        ValidateRequestParameters: false
 
     # TODO: Complete the bucket properties below. 
     # Do not forget to add the CorsConfiguration propoerty
@@ -231,3 +239,14 @@ resources:
                 - 's3:PutObject'
                 - '*'
               Resource: !Sub "arn:aws:s3:::${AttachmentsBucket}/*"
+
+    ValidateBody:
+      Type: "AWS::ApiGateway::RequestValidator"
+      Properties:
+        Name: 'ValidateBody'
+        RestApiId:
+          Ref: ApiGatewayRestApi
+        ValidateRequestBody: true
+        ValidateRequestParameters: false
+
+    
