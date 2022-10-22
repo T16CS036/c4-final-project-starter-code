@@ -5,22 +5,18 @@ import { createLogger } from '../utils/logger'
 import { TodoItem } from '../models/TodoItem'
 // import { TodoUpdate } from '../models/TodoUpdate';
 import { UpdateTodoRequest } from '../requests/UpdateTodoRequest'
-import { env } from 'process'
 
+const AWSXRay = require('aws-xray-sdk')
 const XAWS = AWSXRay.captureAWS(AWS)
 
 const logger = createLogger('TodosAccess')
 
 // TODO: Implement the dataLayer logic
 
-const docClient: DocumentClient = new DocumentClient()
+const docClient: DocumentClient = new XAWS.DynamoDB.DocumentClient()
 const todosTable = process.env.TODOS_TABLE
 const indexName = process.env.INDEX_NAME
 export class TodosAccess {
-    constructor(
-        private readonly docClient: DocumentClient = new XAWS.DynamoDB.DocumentClient(),
-        private readonly todosTable = env.TODOS_TABLE,
-        private readonly bucketName = env.ATTACHMENT_S3_BUCKET) { }
 
     static async getTodoItem(userId: string, todoId: string): Promise<TodoItem> {
         logger.info('getTodoItem', { userId, todoId })
